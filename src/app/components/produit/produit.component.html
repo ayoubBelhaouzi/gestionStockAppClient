@@ -1,7 +1,78 @@
 <p>produit works!</p>
-
-<ul>
-  <li *ngFor="let p of produits">
-    REF : {{p.ref}} , Quantité : {{p.quantite}}, PrixUnitaire : {{p.prixUnitaire}}
-  </li>
-</ul>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-7">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">reference</th>
+            <th scope="col">quantite</th>
+            <th scope="col">prix unitaire</th>
+            <th scope="col"><button class="btn btn-outline-primary" (click)="operation = 'add';initProduit()">ADD</button></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of produits">
+            <td>{{p.ref}}</td>
+            <td>{{p.quantite}}</td>
+            <td>{{p.prixUnitaire}}</td>
+            <td>
+              <button class="btn btn-outline-primary" (click)="operation = 'edit';selectedProduit=p">Edit</button>
+              <button class="btn btn-outline-danger" (click)="operation = 'remove';selectedProduit=p">Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header">
+       {{ operation == 'add' ? 'Ajouter Produit' :
+       operation == 'edit' ? 'Modifier Produit' :
+       operation == 'remove' ? 'Supprimer Produit' : ''}}
+        </div>
+        <div class="card-body">
+          <form [formGroup]="produitForm" *ngIf="operation == 'edit' || operation == 'add'" (ngSubmit)="operation == 'add' ? addProduit() :
+          operation == 'edit' ? updateProduit() : removeProduit()">
+          <div class="form-group" hidden>
+            <label>id : </label>
+            <input type="number" class="form-control" formControlName="id" [(ngModel)]="selectedProduit.id"/>
+          </div>
+            <div class="form-group">
+              <label>reference : </label>
+              <input type="text" class="form-control" formControlName="ref" [(ngModel)]="selectedProduit.ref"/>
+            </div>
+            <div class="alert alert-danger" *ngIf="produitForm.controls['ref'].invalid && produitForm.controls['ref'].touched">
+              Reference Obligatoire !
+            </div>
+            <div class="form-group">
+              <label>quantite : </label>
+              <input type="number" class="form-control" formControlName="quantite" [(ngModel)]="selectedProduit.quantite"/>
+            </div>
+            <div class="form-group">
+              <label>prix Unitaire : </label>
+              <input type="number" class="form-control" formControlName="prixUnitaire" [(ngModel)]="selectedProduit.prixUnitaire"/>
+            </div>
+            <br/>
+            <button id="aa" type="submit" class="btn btn-primary" [disabled]="produitForm.invalid">
+              {{ operation == 'add' ? 'Ajouter' :
+              operation == 'edit' ? 'Modifier' :
+              operation == 'remove' ? 'Supprimer' : 'add'}}
+            </button>
+          </form>
+        </div>
+        <div class="container" *ngIf="operation == 'remove'">
+          <p class="card-title">
+            Reference : {{selectedProduit.ref}}
+          </p>
+          <p>
+            Voulez-vous supprimer ce produit ?
+          </p>
+          <button class="btn btn-success"
+          [disabled]="!selectedProduit.ref"
+          (click)="removeProduitById(selectedProduit.id)">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Produit } from '../commun/models/Produit';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { API_URLS } from '../conf/api.url.config';
 
 @Injectable({
   providedIn: 'root'
@@ -8,17 +11,23 @@ export class ProduitService {
 
   readonly PRODUITS : Produit[]= [];
 
-  constructor() {
-    let p1 : Produit = new Produit('Livre', 50, 20);
-    let p2 : Produit = new Produit('Cahier', 200, 5.25);
-    let p3 : Produit = new Produit('Stylo', 500, 2.10);
+  constructor(private http:HttpClient) {
 
-    this.PRODUITS.push(p1);
-    this.PRODUITS.push(p2);
-    this.PRODUITS.push(p3);
    }
 
-   public getProduits() : Produit[]{
-    return this.PRODUITS;
+   public getProduits() : Observable<Produit[]>{
+    return this.http.get<Produit[]>(API_URLS.PRODUITS_URLS);
+   }
+
+   public addProduit(p : Produit):Observable<any> {
+    return this.http.post(API_URLS.PRODUITS_URLS_ADD,p);
+   }
+
+   public updateProduit(p : Produit):Observable<any> {
+    return this.http.put(API_URLS.PRODUITS_URLS_UPDATE,p);
+   }
+
+   public deleteProduit(id:number):Observable<any> {
+    return this.http.delete(API_URLS.PRODUITS_URLS_REMOVE+"/"+id);
    }
 }
